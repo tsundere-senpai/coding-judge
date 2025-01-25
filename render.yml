@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: backend-service
+    env: docker
+    dockerfilePath: ./backend/Dockerfile  # Path to Dockerfile for backend service
+    buildCommand: ""  # No specific build command for Docker images, using the Dockerfile
+    startCommand: "python manage.py runserver 0.0.0.0:8000"  # Adjust based on your backend setup (example for a Django app)
+    autoDeploy: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Allows Docker-in-Docker access
+      - /tmp:/tmp  # Mounts the host's /tmp directory into the container
+
+  - type: web
+    name: frontend-service
+    env: docker
+    dockerfilePath: ./front/Dockerfile  # Path to Dockerfile for frontend service
+    buildCommand: ""  # No specific build command for Docker images, using the Dockerfile
+    startCommand: "npm start"  # Example for a React/Node.js app (adjust if needed)
+    autoDeploy: true
+    ports:
+      - "8080:80"
+    dependsOn:
+      - backend-service
